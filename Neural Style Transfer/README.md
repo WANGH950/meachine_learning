@@ -8,7 +8,8 @@ python==3.7.5 torch==1.8.1 torchversion==0.9.1
 1. 将content image存入路径'./images/content_image/',将style image存入路径'./images/style_image';
 2. 运行脚本'main.py'：
 >\>\>python main.py
-1. 根据提示，输入对应加后缀的文件名，以及合成文件的文件名，等待训练即可，合成的图片会自动保存在'./outputs'目录中。
+3. 根据提示，输入对应加后缀的文件名，以及合成文件的文件名，等待训练即可，合成的图片会自动保存在'./outputs'目录中;
+4. 可以自己调整参数以达到不同程度的效果。
 
 ## 运行参考
 1. 将content image起名为'content.jpg'存放在'./images/content_image/'，将style image起名为'style_image.jpg'存放在'./images/style_image/';
