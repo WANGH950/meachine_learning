@@ -26,7 +26,7 @@ python==3.7.5 torch==1.8.1 torchversion==0.9.1
 ```
 3. 从目录'./outputs'中查看结果
 
-![结果]('./outputs/output.jpg')
+![结果](./outputs/output.jpg)
 
 ## 参考文献
 [Leon A. Gatys, Alexander S. Ecker, Matthias Bethge. A Neural Algorithm of Artistic Style. 2015,arXiv:1508.06576.](https://arxiv.org/abs/1508.06576)
