@@ -49,4 +49,4 @@ if __name__ == '__main__':
     image = nst.get_image()
     image.show()
     image.save('./outputs/'+output_path)
-    print("Save image at './outputs/"+output_path+"'")
+    print("Image saved to './outputs/"+output_path+"'")
