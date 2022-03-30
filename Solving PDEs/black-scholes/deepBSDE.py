@@ -12,7 +12,7 @@ class deepBSDE(nn.Module):
         self.N = N
         self.batch_size = batch_size
         # 实例化
-        self.BS = Black_Scholes(input_dim,R,delta,v_h,v_l,gamma_h,gamma_l,mu,sigma)
+        self.BS = model.Black_Scholes(input_dim,R,delta,v_h,v_l,gamma_h,gamma_l,mu,sigma)
         # 需要训练的结果
         self.result = nn.Parameter((torch.ones([1])*45).float(),requires_grad=True)
         # 梯度
