@@ -14,4 +14,5 @@ python==3.7.5 torch==1.8.1
 
 ## 参考文献
 [1] Han J, Arnulf J, Weinan E. Solving high-dimensional partial differential equations using deep learning[J]. Proceedings of the National Academy of Sciences of the United States of America, 2018, 115(34): 8505-8510.
+
 [2] M. Raissi, P. Perdikaris, G.E. Karniadakis. Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations[J]. Journal of Computational Physics, 2019, 378: 686-707.
