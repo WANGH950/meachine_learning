@@ -9,6 +9,10 @@ python==3.7.5 torch==1.8.1
 
 详见"./black-scholes/", "blackScholes.py"中定义了Black-Scholes方程类以及训练器, "deepBSDE.py"和"deepBSDEplus.py"分别实现了deepBSDE和deepBSDE++算法.
 
+实现了deepBSDE++方法, 以及创新的采样方式, 结合自动微分技术求解了聚合物扩散的Feynman-Kac方程.
+
+详见"./polymer-diffusion/", "deepBSDE.py"中定义了聚合物扩散的Feynman-Kac方程类以及模型训练器，并实现了上述方法.
+
 ## PINNs
 复现了文献[2]中的连续时间物理信息神经网络(PINN)模型, 在聚合物扩散的Feynman-Kac方程上进行实验, 分别求解了向前和向后方程.
 
