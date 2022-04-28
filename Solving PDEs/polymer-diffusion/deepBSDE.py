@@ -16,7 +16,7 @@ class PolymerDiffusion:
         self.batch_size = batch_size
 
     def u0(self,n,s):
-        beta = 1000000
+        beta = 10000000
         return torch.sqrt(torch.tensor(beta/2/np.pi))*torch.exp(-beta*s**2/2)/(self.nmax+1)
 
     def U(self,x):
@@ -79,20 +79,23 @@ class PolymerDiffusion:
         criterion = nn.MSELoss()
 
         lossu_values = np.zeros(epoch)
+        lossus_values = np.zeros(epoch)
         result_values = np.zeros(epoch)
 
         for i in range(epoch):
             model.train()
             optimizer.zero_grad()
-            u,u0 = model(t,N)
+            u,u0,us = model(t,N)
             loss_u = criterion(u,u0)
-            loss = loss_u
+            loss_us = torch.sum(us**2)
+            loss = loss_u + loss_us
             loss.backward()
             optimizer.step()
             lossu_values[i] = loss_u.item()
+            lossus_values[i] = loss_us.item()
             model.eval()
             result_values[i] = model.mlp(torch.tensor([[s,t]]).float())[0,n]
-            print('epoch:',i,' lossu:',lossu_values[i],' result:',result_values[i])
+            print('epoch:',i,' lossu:',lossu_values[i],' lossus:',lossus_values[i],' result:',result_values[i])
         return lossu_values, result_values
 
 
@@ -114,7 +117,12 @@ class deepBSDEplus(nn.Module):
             u = u - partial_s*samples_deltaB[:,N-i-1:N-i] - partial_ss*delta_t/2
             _, partial_s, partial_ss = self.get_partial(samples_n[:,N-i-1:N-i],samples_s[:,N-i-1:N-i],tk)
             tk -= delta_t
-        return u, self.func.u0(samples_n[:,0:1],samples_s[:,0:1])
+        # 边界条件
+        ss1 = torch.rand([int(self.func.batch_size/2),1])*2 + self.kmax*t
+        ss2 = (torch.rand([int(self.func.batch_size/2),1])-1)*2 + self.kmin*t
+        ss = torch.cat([ss1,ss2],dim=0)
+        us = self.mlp(torch.cat([ss,torch.ones_like(ss)*t],dim=1))
+        return u, self.func.u0(samples_n[:,0:1],samples_s[:,0:1]), us
 
     def get_partial(self,n,s,t):
         s.requires_grad_(True)
