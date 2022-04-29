@@ -81,6 +81,7 @@ class PolymerDiffusion:
         lossu_values = np.zeros(epoch)
         lossus_values = np.zeros(epoch)
         result_values = np.zeros(epoch)
+        loss_values = np.zeros(epoch)
 
         for i in range(epoch):
             model.train()
@@ -93,10 +94,11 @@ class PolymerDiffusion:
             optimizer.step()
             lossu_values[i] = loss_u.item()
             lossus_values[i] = loss_us.item()
+            loss_values[i] = loss.item()
             model.eval()
             result_values[i] = model.mlp(torch.tensor([[s,t]]).float())[0,n]
-            print('epoch:',i,' lossu:',lossu_values[i],' lossus:',lossus_values[i],' result:',result_values[i])
-        return lossu_values, result_values
+            print('epoch:',i,' loss:',loss_values[i],' lossu:',lossu_values[i],' lossus:',lossus_values[i],' result:',result_values[i])
+        return loss_values, lossu_values, lossus_values, result_values
 
 
 class deepBSDEplus(nn.Module):
