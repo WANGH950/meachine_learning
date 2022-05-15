@@ -80,25 +80,31 @@ class PolymerDiffusion:
 
         lossu_values = np.zeros(epoch)
         lossus_values = np.zeros(epoch)
+        lossuint_values = np.zeros(epoch)
+        lossup_values = np.zeros(epoch)
         result_values = np.zeros(epoch)
         loss_values = np.zeros(epoch)
 
         for i in range(epoch):
             model.train()
             optimizer.zero_grad()
-            u,u0,us = model(t,N)
+            u,u0,us,uint,up = model(t,N)
             loss_u = criterion(u,u0)
             loss_us = torch.sum(us**2)
-            loss = loss_u + loss_us
+            loss_uint = uint**2
+            loss_up = torch.sum(up**2)
+            loss = loss_u + loss_us + loss_uint + loss_up
             loss.backward()
             optimizer.step()
             lossu_values[i] = loss_u.item()
             lossus_values[i] = loss_us.item()
+            lossuint_values[i] = loss_uint.item()
+            lossup_values[i] = loss_up.item()
             loss_values[i] = loss.item()
             model.eval()
             result_values[i] = model.mlp(torch.tensor([[s,t]]).float())[0,n]
-            print('epoch:',i,' loss:',loss_values[i],' lossu:',lossu_values[i],' lossus:',lossus_values[i],' result:',result_values[i])
-        return loss_values, lossu_values, lossus_values, result_values
+            print('epoch:',i,' loss:',loss_values[i],' lossu:',lossu_values[i],' lossus:',lossus_values[i],' lossuint:',lossuint_values[i],' lossup:',lossup_values[i],' result:',result_values[i])
+        return loss_values, lossu_values, lossus_values, lossuint_values, lossup_values, result_values
 
 
 class deepBSDEplus(nn.Module):
@@ -109,6 +115,7 @@ class deepBSDEplus(nn.Module):
         self.kmax = self.func.U(0)
         # 近似结果
         self.mlp = common.MLP(2,nmax+1)
+        self.relu = nn.ReLU()
 
     def forward(self,t,N):
         delta_t = t/N
@@ -124,7 +131,14 @@ class deepBSDEplus(nn.Module):
         ss2 = (torch.rand([int(self.func.batch_size/2),1])-1)*2 + self.kmin*t
         ss = torch.cat([ss1,ss2],dim=0)
         us = self.mlp(torch.cat([ss,torch.ones_like(ss)*t],dim=1))
-        return u, self.func.u0(samples_n[:,0:1],samples_s[:,0:1]), us
+        # 积分条件
+        delta_s = (self.kmax-self.kmin)*t/N
+        ss = torch.linspace(self.kmin*t,self.kmax*t-delta_s,N).unsqueeze(-1)
+        result = self.mlp(torch.cat([ss,torch.ones_like(ss)*t],dim=1))
+        uint = torch.sum(result)*delta_s - 1
+        # 恒正条件
+        up = self.relu(-result)
+        return u, self.func.u0(samples_n[:,0:1],samples_s[:,0:1]), us, uint, up
 
     def get_partial(self,n,s,t):
         s.requires_grad_(True)
