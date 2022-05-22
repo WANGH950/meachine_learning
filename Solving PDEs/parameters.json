@@ -1,0 +1,33 @@
+{
+    "polymer_deepBSDE_params": {
+        "mu": 5,
+        "lam": 4.8,
+        "D0": 3,
+        "nmin": 3,
+        "nmax": 10,
+        "alpha": 1,
+        "batch_size": 128
+    },
+    "polymer_deepBSDE_train_params": {
+        "epoch": 50000,
+        "t": 2,
+        "N": 50,
+        "n": 5
+    },
+    "black-scholes_params": {
+        "t": 1,
+        "x": 100,
+        "T": 1,
+        "N": 40,
+        "delta": 0.6666,
+        "mu": 0.02,
+        "R": 0.02,
+        "sigma": 0.2,
+        "v_h": 50,
+        "v_l": 70,
+        "gamma_h": 0.2,
+        "gamma_l": 0.02,
+        "d": 100,
+        "batch_size": 64
+    }
+}
